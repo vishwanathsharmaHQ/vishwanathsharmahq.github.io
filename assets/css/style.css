@@ -1,0 +1,266 @@
+/* ---------- reset-ish ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: inherit; }
+
+/* ---------- palette + type ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f7f4ee;      /* warm paper */
+  --ink: #171717;
+  --muted: #6b6558;
+  --rule: #171717;
+  --accent: #171717;
+  --hover-tint: rgba(0,0,0,.04);
+  --scrollbar: rgba(0,0,0,.15);
+  --shelf-gap: 0px;
+  --spine-w: 68px;
+  --spine-w-hover: 76px;
+  --pages-w: min(760px, 92vw);
+  --dur: 380ms;
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010;
+  --ink: #ededed;
+  --muted: #9a9689;
+  --rule: #ededed;
+  --accent: #ededed;
+  --hover-tint: rgba(255,255,255,.06);
+  --scrollbar: rgba(255,255,255,.18);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  /* minima theme font stack */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- masthead ---------- */
+.masthead {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.masthead-title h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: .02em;
+  font-weight: 700;
+}
+.masthead-title .tagline {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* ---------- theme toggle ---------- */
+.theme-toggle {
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .06em;
+  color: var(--ink);
+  background: transparent;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.theme-toggle:hover { background: var(--hover-tint); }
+.theme-toggle .theme-icon { display: inline-block; }
+.theme-toggle .theme-label { font-size: 11px; opacity: .7; }
+
+/* ---------- shelf ---------- */
+.shelf {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar) transparent;
+}
+.shelf::-webkit-scrollbar { height: 6px; }
+.shelf::-webkit-scrollbar-track { background: transparent; }
+.shelf::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 3px;
+}
+.shelf::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ---------- book ---------- */
+.book {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border-right: 1px solid var(--rule);
+  height: 100%;
+  scroll-snap-align: start;
+}
+.book:first-child { border-left: 1px solid var(--rule); }
+
+/* ---------- spine (the vertical title) ---------- */
+.spine {
+  width: var(--spine-w);
+  min-width: var(--spine-w);
+  padding: 24px 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  text-align: left;
+  border-left: 0;
+  position: relative;
+}
+.spine:hover {
+  background: var(--hover-tint);
+}
+.spine-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.spine-date {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: nowrap;
+}
+
+/* selected book: invert the spine so it reads like a bookmark */
+.book.is-open .spine {
+  background: var(--ink);
+  color: var(--bg);
+}
+.book.is-open .spine .spine-date { color: var(--bg); opacity: .7; }
+
+/* ---------- pages (accordion body) ---------- */
+.pages {
+  width: 0;
+  overflow: hidden;
+  transition: width var(--dur) var(--ease);
+  border-left: 1px solid transparent;
+  background: var(--bg);
+}
+.book.is-open .pages {
+  width: var(--pages-w);
+  border-left-color: var(--rule);
+}
+.pages-inner {
+  height: 100%;
+  overflow-y: auto;
+  padding: 48px 56px 64px;
+  max-width: 68ch;
+  margin: 0 auto;
+}
+.pages-inner h2 {
+  margin: 0 0 12px;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+.pages-inner .lede {
+  margin: 0 0 28px;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 18px;
+}
+.pages-inner p {
+  margin: 0 0 18px;
+  text-align: justify;
+  hyphens: auto;
+}
+.pages-inner a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* nice scrollbar in webkit */
+.pages-inner::-webkit-scrollbar { width: 8px; }
+.pages-inner::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+
+/* ---------- colophon ---------- */
+.colophon {
+  padding: 14px 32px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.colophon .dot { opacity: .5; }
+.colophon a { text-decoration: none; border-bottom: 1px dotted currentColor; }
+
+/* ---------- mobile: shelf stacks vertically, spines become horizontal tabs ---------- */
+@media (max-width: 800px) {
+  .shelf {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: none;
+  }
+  .book {
+    flex-direction: column;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    min-height: 0;
+  }
+  .book:first-child { border-left: 0; border-top: 1px solid var(--rule); }
+
+  .spine {
+    width: 100%;
+    min-width: 0;
+    padding: 18px 20px;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+  .spine-title { font-size: 22px; }
+
+  .pages {
+    width: 100%;
+    height: 0;
+    transition: height var(--dur) var(--ease);
+    border-left: 0;
+  }
+  .book.is-open .pages {
+    width: 100%;
+    height: 70vh;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .pages-inner {
+    padding: 28px 22px 40px;
+  }
+  .pages-inner h2 { font-size: 26px; }
+}

@@ -1,0 +1,61 @@
+---
+# empty front-matter tells Jekyll to process this file as a Liquid template
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}" />
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}" />
+  <script>
+    // set theme before paint to avoid flash
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead-title">
+      <h1>vishwanath sharma</h1>
+      <p class="tagline">{{ site.description }}</p>
+    </div>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle color theme">
+      <span class="theme-icon" aria-hidden="true">◐</span>
+      <span class="theme-label">theme</span>
+    </button>
+  </header>
+
+  <main class="shelf" id="shelf">
+    {% for post in site.posts %}
+    <article class="book" data-id="{{ post.slug }}">
+      <button class="spine" aria-expanded="false" aria-controls="pages-{{ post.slug }}">
+        <span class="spine-title">{{ post.title }}</span>
+        <span class="spine-date">{{ post.date | date: "%Y · %m" }}</span>
+      </button>
+      <div class="pages" id="pages-{{ post.slug }}" role="region">
+        <div class="pages-inner">
+          <h2>{{ post.title }}</h2>
+          {% if post.lede %}<p class="lede">{{ post.lede }}</p>{% endif %}
+          {{ post.content }}
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </main>
+
+  <footer class="colophon">
+    <span>&copy; vishwanath sharma</span>
+    <span class="dot">·</span>
+    <a href="https://github.com/vishwanathsharmahq">github</a>
+  </footer>
+
+  <script src="{{ '/assets/js/shelf.js' | relative_url }}" defer></script>
+</body>
+</html>

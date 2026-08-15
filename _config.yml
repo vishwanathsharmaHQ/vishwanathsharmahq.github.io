@@ -1,3 +1,14 @@
 title: Vishwanath Sharma's Blog
 description: read and weep
-theme: jekyll-theme-minimal
+
+# no theme — index.html brings its own styles from assets/
+# ordering: site.posts is reverse-chronological (newest first) by default
+
+markdown: kramdown
+permalink: /posts/:slug/
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

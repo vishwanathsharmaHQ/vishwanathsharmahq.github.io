@@ -1,3 +1,6 @@
 title: Vishwanath Sharma's Blog
 description: read and weep
-theme: jekyll-theme-minimal
+theme: minima
+
+plugins:
+  - jekyll-feed

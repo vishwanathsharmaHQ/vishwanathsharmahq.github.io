@@ -4,3 +4,9 @@ theme: minima
 
 plugins:
   - jekyll-feed
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
